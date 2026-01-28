@@ -1,0 +1,22 @@
+{
+  "name": "developer-portfolio",
+  "version": "1.0.0",
+  "description": "Modern, responsive developer portfolio website",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "dev": "npx live-server --port=8000",
+    "deploy": "npx vercel"
+  },
+  "keywords": [
+    "portfolio",
+    "developer",
+    "website",
+    "responsive",
+    "modern"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
