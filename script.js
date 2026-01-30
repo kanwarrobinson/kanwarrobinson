@@ -17,6 +17,7 @@ function initializePortfolio() {
     initializeNavigation();
     initializeTheme();
     initializeParticles();
+    initializeSkillsGrid();
     initializeTypingEffect();
     initializeScrollAnimations();
     initializeSkills();
@@ -63,7 +64,7 @@ function loadConfiguration() {
         
         // Profile Images
         setImage('#profile-image', config.personal.profileImage);
-        setImage('#about-image', config.personal.profileImage);
+        setImage('#about-image', config.personal.aboutImage || config.personal.profileImage);
         
         // Resume Link
         setLink('#resume-download', config.personal.resumeLink);
@@ -294,10 +295,9 @@ function initializeTypingEffect() {
     
     const config = portfolioConfig?.personal || {};
     const texts = [
-        config.title || 'Full Stack Developer',
-        'Creative Problem Solver',
-        'Tech Enthusiast',
-        'UI/UX Lover'
+        config.title || 'AI Enthusiast',
+        'K8s Deployment Strategist',
+        'AI Enthusiast'
     ];
     
     let textIndex = 0;
@@ -403,15 +403,48 @@ function initializeSkills() {
    ============================================ */
 
 function initializeProjects() {
-    const projectsGrid = document.getElementById('projects-grid');
-    if (!projectsGrid || !portfolioConfig?.projects) return;
-    
-    let visibleProjects = 6;
+    const track = document.getElementById('projects-track');
+    const filterContainer = document.getElementById('projects-filter');
+    const prevBtn = document.getElementById('projects-prev');
+    const nextBtn = document.getElementById('projects-next');
+    if (!track || !filterContainer || !portfolioConfig?.projects) return;
+
     const allProjects = portfolioConfig.projects;
-    
-    function renderProjects(projects = allProjects.slice(0, visibleProjects)) {
-        projectsGrid.innerHTML = projects.map((project, index) => `
-            <div class="project-card" data-category="${project.featured ? 'featured' : 'web'}" data-aos="fade-up" data-aos-delay="${(index % 3) * 100}">
+    const categories = Array.from(new Set(allProjects.map(project => project.category).filter(Boolean)));
+    let activeFilter = 'all';
+    let currentIndex = 0;
+    let autoTimer;
+
+    function getVisibleCount() {
+        if (window.innerWidth >= 1024) return 4;
+        if (window.innerWidth >= 640) return 2;
+        return 1;
+    }
+
+    function buildFilters() {
+        const buttons = [
+            { label: 'All Projects', value: 'all' },
+            { label: 'Featured', value: 'featured' },
+            ...categories.map(category => ({ label: category, value: category }))
+        ];
+
+        filterContainer.innerHTML = buttons.map((btn, index) => `
+            <button class="filter-btn ${btn.value === 'all' ? 'active' : ''}" data-filter="${btn.value}" data-aos="fade-up" data-aos-delay="${index * 50}">
+                ${btn.label}
+            </button>
+        `).join('');
+    }
+
+    function getFilteredProjects() {
+        if (activeFilter === 'all') return allProjects;
+        if (activeFilter === 'featured') return allProjects.filter(project => project.featured);
+        return allProjects.filter(project => project.category === activeFilter);
+    }
+
+    function renderProjects() {
+        const projects = getFilteredProjects();
+        track.innerHTML = projects.map((project, index) => `
+            <div class="project-card" data-category="${project.category || ''}" data-aos="fade-up" data-aos-delay="${(index % 4) * 80}">
                 <div class="project-image">
                     <img src="${project.image}" alt="${project.title}" onerror="this.src='https://via.placeholder.com/400x300/6366f1/ffffff?text=${encodeURIComponent(project.title)}'">
                     <div class="project-overlay">
@@ -432,35 +465,85 @@ function initializeProjects() {
                 </div>
             </div>
         `).join('');
-    }
-    
-    renderProjects();
-    
-    // Filter functionality
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            const filter = btn.getAttribute('data-filter');
-            const filteredProjects = filter === 'all' 
-                ? allProjects.slice(0, visibleProjects)
-                : allProjects.filter(p => filter === 'featured' ? p.featured : true).slice(0, visibleProjects);
-            
-            renderProjects(filteredProjects);
-        });
-    });
-    
-    // Load more functionality
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    loadMoreBtn?.addEventListener('click', () => {
-        visibleProjects += 3;
-        if (visibleProjects >= allProjects.length) {
-            loadMoreBtn.style.display = 'none';
-        }
-        renderProjects();
+
+        currentIndex = 0;
+        updateCarousel();
         AOS.refresh();
+    }
+
+    function updateCarousel() {
+        const cards = track.querySelectorAll('.project-card');
+        if (!cards.length) return;
+
+        const visibleCount = getVisibleCount();
+        const maxIndex = Math.max(0, cards.length - visibleCount);
+        currentIndex = Math.min(currentIndex, maxIndex);
+
+        const cardWidth = cards[0].getBoundingClientRect().width;
+        const gap = parseFloat(getComputedStyle(track).gap) || 0;
+        const offset = (cardWidth + gap) * currentIndex;
+        track.style.transform = `translateX(-${offset}px)`;
+
+        if (prevBtn && nextBtn) {
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex >= maxIndex;
+        }
+    }
+
+    function nextSlide() {
+        const cards = track.querySelectorAll('.project-card');
+        const visibleCount = getVisibleCount();
+        const maxIndex = Math.max(0, cards.length - visibleCount);
+        currentIndex = currentIndex >= maxIndex ? 0 : currentIndex + 1;
+        updateCarousel();
+    }
+
+    function prevSlide() {
+        const cards = track.querySelectorAll('.project-card');
+        const visibleCount = getVisibleCount();
+        const maxIndex = Math.max(0, cards.length - visibleCount);
+        currentIndex = currentIndex <= 0 ? maxIndex : currentIndex - 1;
+        updateCarousel();
+    }
+
+    function startAutoScroll() {
+        stopAutoScroll();
+        autoTimer = setInterval(nextSlide, 3500);
+    }
+
+    function stopAutoScroll() {
+        if (autoTimer) clearInterval(autoTimer);
+    }
+
+    buildFilters();
+    renderProjects();
+    startAutoScroll();
+
+    filterContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('.filter-btn');
+        if (!button) return;
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        activeFilter = button.dataset.filter;
+        renderProjects();
+        startAutoScroll();
+    });
+
+    prevBtn?.addEventListener('click', () => {
+        prevSlide();
+        startAutoScroll();
+    });
+
+    nextBtn?.addEventListener('click', () => {
+        nextSlide();
+        startAutoScroll();
+    });
+
+    track.addEventListener('mouseenter', stopAutoScroll);
+    track.addEventListener('mouseleave', startAutoScroll);
+
+    window.addEventListener('resize', () => {
+        updateCarousel();
     });
 }
 
@@ -727,6 +810,49 @@ function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+/* ============================================
+   SKILLS GRID ANIMATION
+   ============================================ */
+
+function initializeSkillsGrid() {
+    const container = document.getElementById('skills-radar-grid');
+    if (!container || !portfolioConfig?.skills) return;
+
+    const skills = portfolioConfig.skills;
+    
+    skills.forEach((category, catIndex) => {
+        // Add category title
+        const categoryTitle = document.createElement('div');
+        categoryTitle.className = 'skill-category-title';
+        categoryTitle.textContent = category.category;
+        categoryTitle.setAttribute('data-aos', 'fade-up');
+        categoryTitle.setAttribute('data-aos-delay', catIndex * 100);
+        container.appendChild(categoryTitle);
+
+        // Add skill cards
+        category.items.forEach((skill, skillIndex) => {
+            const card = document.createElement('div');
+            card.className = 'skill-radar-card';
+            card.setAttribute('data-aos', 'zoom-in');
+            card.setAttribute('data-aos-delay', (catIndex * 100) + (skillIndex * 50));
+            
+            // Set CSS variables
+            card.style.setProperty('--skill-percent', skill.level);
+            card.style.setProperty('--skill-color', category.color || '#6366f1');
+            
+            card.innerHTML = `
+                <div class="skill-radar-content">
+                    <i class="skill-radar-icon ${skill.icon || 'fas fa-code'}"></i>
+                    <div class="skill-radar-name">${skill.name}</div>
+                    <div class="skill-radar-percent">${skill.level}%</div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
+    });
 }
 
 // Initialize EmailJS if configured

@@ -1,7 +1,7 @@
 {
   "name": "developer-portfolio",
   "version": "1.0.0",
-  "description": "Modern, responsive developer portfolio website",
+  "description": "Kanwar Robinson, developer portfolio website",
   "main": "index.html",
   "scripts": {
     "start": "npx http-server -p 8000 -o",
@@ -15,7 +15,7 @@
     "responsive",
     "modern"
   ],
-  "author": "Your Name",
+  "author": "Kanwar Robinson",
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {}

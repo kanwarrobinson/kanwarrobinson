@@ -35,7 +35,7 @@
         <div class="container nav-container">
             <a href="#home" class="logo">
                 <span class="logo-bracket">&lt;</span>
-                <span class="logo-text">DevPortfolio</span>
+                <span class="logo-text">Kanwar Robinson</span>
                 <span class="logo-bracket">/&gt;</span>
             </a>
             
@@ -103,21 +103,24 @@
                 </div>
                 
                 <div class="hero-image" data-aos="fade-left" data-aos-delay="200">
-                    <div class="profile-card">
-                        <div class="profile-image-wrapper">
-                            <img src="assets/profile.jpg" alt="Profile Picture" class="profile-image" id="profile-image">
-                            <div class="profile-ring"></div>
+                    <div class="code-window">
+                        <div class="code-window-header">
+                            <div class="window-controls">
+                                <span class="control close"></span>
+                                <span class="control minimize"></span>
+                                <span class="control maximize"></span>
+                            </div>
+                            <div class="window-title">developer.js</div>
                         </div>
-                        <div class="floating-elements">
-                            <div class="floating-icon" style="--delay: 0s; --x: 20px; --y: -30px;">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <div class="floating-icon" style="--delay: 1s; --x: -25px; --y: 20px;">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <div class="floating-icon" style="--delay: 2s; --x: 30px; --y: 35px;">
-                                <i class="fas fa-rocket"></i>
-                            </div>
+                        <div class="code-window-body">
+                            <pre class="code-content"><code><span class="code-comment">// Software Engineer</span>
+<span class="code-keyword">const</span> <span class="code-variable">developer</span> = {
+  <span class="code-property">name</span>: <span class="code-string">'Kanwar Robinson'</span>,
+  <span class="code-property">title</span>: <span class="code-string">'Software Engineer - II'</span>,
+  <span class="code-property">skills</span>: [<span class="code-string">'Python'</span>, <span class="code-string">'FastAPI'</span>, <span class="code-string">'Java'</span>],
+  <span class="code-property">focuses</span>: [<span class="code-string">'AI/LLM'</span>, <span class="code-string">'Microservices'</span>],
+  <span class="code-property">learning</span>: <span class="code-string">'Always'</span>
+};</code></pre>
                         </div>
                     </div>
                 </div>
@@ -144,10 +147,6 @@
                 <div class="about-image" data-aos="fade-right">
                     <div class="about-image-wrapper">
                         <img src="assets/about.jpg" alt="About Me" id="about-image">
-                        <div class="experience-badge">
-                            <h3>5+</h3>
-                            <p>Years Experience</p>
-                        </div>
                     </div>
                 </div>
                 
@@ -173,7 +172,7 @@
                     </div>
                     
                     <div class="about-actions">
-                        <a href="#" class="btn btn-primary" id="resume-download">
+                        <a href="assets/resume.pdf" class="btn btn-primary" id="resume-download" download="Kanwar_Robinson_Resume.pdf" target="_blank">
                             <i class="fas fa-download"></i>
                             <span>Download CV</span>
                         </a>
@@ -194,15 +193,60 @@
     </section>
 
     <!-- Skills Section -->
-    <section id="skills" class="section skills-section">
+    <section id="skills" class="section skills-category-section">
         <div class="container">
             <div class="section-header" data-aos="fade-up">
                 <h2 class="section-title">Skills & Expertise</h2>
                 <p class="section-subtitle">Technologies I work with</p>
             </div>
-            
-            <div class="skills-container" id="skills-container">
-                <!-- Skills will be dynamically loaded from config.js -->
+            <div class="skills-category-grid">
+                <div class="skill-category-card">
+                    <h3 class="skill-category-title">Backend Development</h3>
+                    <div class="skill-icon-grid">
+                        <span class="skill-icon" data-label="Python"><i class="fab fa-python"></i></span>
+                        <span class="skill-icon" data-label="FastAPI"><i class="fas fa-bolt"></i></span>
+                        <span class="skill-icon" data-label="Java"><i class="fab fa-java"></i></span>
+                        <span class="skill-icon" data-label="Spring Boot"><i class="fas fa-leaf"></i></span>
+                        <span class="skill-icon" data-label="REST APIs"><i class="fas fa-network-wired"></i></span>
+                        <span class="skill-icon" data-label="Microservices"><i class="fas fa-cubes"></i></span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <h3 class="skill-category-title">AI/ML & LLM</h3>
+                    <div class="skill-icon-grid">
+                        <span class="skill-icon" data-label="LangChain"><i class="fas fa-link"></i></span>
+                        <span class="skill-icon" data-label="LangGraph"><i class="fas fa-project-diagram"></i></span>
+                        <span class="skill-icon" data-label="RAG"><i class="fas fa-brain"></i></span>
+                        <span class="skill-icon" data-label="OpenAI APIs"><i class="fas fa-robot"></i></span>
+                        <span class="skill-icon" data-label="Vector Stores"><i class="fas fa-database"></i></span>
+                        <span class="skill-icon" data-label="Multi-Agent AI"><i class="fas fa-users-cog"></i></span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <h3 class="skill-category-title">DevOps & Cloud</h3>
+                    <div class="skill-icon-grid">
+                        <span class="skill-icon" data-label="Kubernetes"><i class="fas fa-dharmachakra"></i></span>
+                        <span class="skill-icon" data-label="Docker"><i class="fab fa-docker"></i></span>
+                        <span class="skill-icon" data-label="Helm"><i class="fas fa-ship"></i></span>
+                        <span class="skill-icon" data-label="Jenkins"><i class="fab fa-jenkins"></i></span>
+                        <span class="skill-icon" data-label="GitHub Actions"><i class="fab fa-github"></i></span>
+                        <span class="skill-icon" data-label="GKE"><i class="fab fa-google"></i></span>
+                    </div>
+                </div>
+
+                <div class="skill-category-card">
+                    <h3 class="skill-category-title">Data & Messaging</h3>
+                    <div class="skill-icon-grid">
+                        <span class="skill-icon" data-label="MongoDB"><i class="fas fa-database"></i></span>
+                        <span class="skill-icon" data-label="Redis Stack"><i class="fas fa-server"></i></span>
+                        <span class="skill-icon" data-label="Apache Kafka"><i class="fas fa-stream"></i></span>
+                        <span class="skill-icon" data-label="Zookeeper"><i class="fas fa-sitemap"></i></span>
+                        <span class="skill-icon" data-label="OpenTelemetry"><i class="fas fa-chart-line"></i></span>
+                        <span class="skill-icon" data-label="Prometheus"><i class="fas fa-fire"></i></span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -215,21 +259,21 @@
                 <p class="section-subtitle">Some of my recent work</p>
             </div>
             
-            <div class="projects-filter" data-aos="fade-up" data-aos-delay="100">
-                <button class="filter-btn active" data-filter="all">All Projects</button>
-                <button class="filter-btn" data-filter="featured">Featured</button>
-                <button class="filter-btn" data-filter="web">Web Apps</button>
-                <button class="filter-btn" data-filter="mobile">Mobile</button>
+            <div class="projects-filter" id="projects-filter" data-aos="fade-up" data-aos-delay="100">
+                <!-- Filter tags will be dynamically loaded -->
             </div>
-            
-            <div class="projects-grid" id="projects-grid">
-                <!-- Projects will be dynamically loaded from config.js -->
-            </div>
-            
-            <div class="projects-load-more" data-aos="fade-up">
-                <button class="btn btn-outline" id="load-more-btn">
-                    <span>Load More Projects</span>
-                    <i class="fas fa-chevron-down"></i>
+
+            <div class="projects-carousel" data-aos="fade-up" data-aos-delay="150">
+                <button class="projects-nav prev" id="projects-prev" aria-label="Previous projects">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="projects-viewport">
+                    <div class="projects-track" id="projects-track">
+                        <!-- Projects will be dynamically loaded from config.js -->
+                    </div>
+                </div>
+                <button class="projects-nav next" id="projects-next" aria-label="Next projects">
+                    <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
@@ -296,32 +340,57 @@
             </div>
             
             <div class="contact-content">
-                <div class="contact-info-cards" data-aos="fade-right">
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-envelope"></i>
+                <div class="contact-left" data-aos="fade-right">
+                    <div class="contact-info-section">
+                        <h3 class="contact-info-title">Contact Information</h3>
+                        <p class="contact-info-subtitle">Fill up the form and I'll get back to you as soon as possible.</p>
+                        
+                        <div class="contact-details">
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Email</h4>
+                                    <p id="contact-email">kanwarrobinson.salethraja@gmail.com</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Phone</h4>
+                                    <p id="contact-phone">+91 63820 79802</p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-detail-item">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="detail-content">
+                                    <h4>Location</h4>
+                                    <p id="contact-location">Coimbatore, India</p>
+                                </div>
+                            </div>
                         </div>
-                        <h3>Email</h3>
-                        <p id="contact-email">your.email@example.com</p>
-                        <a href="mailto:your.email@example.com" class="info-link">Send Email</a>
                     </div>
                     
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-phone"></i>
+                    <div class="connect-section">
+                        <h3 class="connect-title">Connect with me</h3>
+                        <div class="social-links-contact">
+                            <a href="#" class="social-link-contact" id="github-contact" target="_blank" rel="noopener">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link-contact" id="linkedin-contact" target="_blank" rel="noopener">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link-contact" id="twitter-contact" target="_blank" rel="noopener">
+                                <i class="fab fa-twitter"></i>
+                            </a>
                         </div>
-                        <h3>Phone</h3>
-                        <p id="contact-phone">+1 (555) 123-4567</p>
-                        <a href="tel:+15551234567" class="info-link">Call Now</a>
-                    </div>
-                    
-                    <div class="info-card">
-                        <div class="info-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <h3>Location</h3>
-                        <p id="contact-location">San Francisco, CA</p>
-                        <a href="#" class="info-link">View Map</a>
                     </div>
                 </div>
                 
