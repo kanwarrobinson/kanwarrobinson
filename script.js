@@ -69,6 +69,11 @@ function loadConfiguration() {
         // Resume Link
         setLink('#resume-download', config.personal.resumeLink);
         
+        // Terminal/Code Window
+        if (config.personal.terminal) {
+            renderTerminalCode(config.personal.terminal);
+        }
+        
         // Update page title
         document.title = `${config.personal.name} | ${config.personal.title}`;
     }
@@ -117,6 +122,97 @@ function applyThemeColors(theme) {
     if (theme.primaryColor) root.style.setProperty('--primary-color', theme.primaryColor);
     if (theme.secondaryColor) root.style.setProperty('--secondary-color', theme.secondaryColor);
     if (theme.accentColor) root.style.setProperty('--accent-color', theme.accentColor);
+}
+
+function renderTerminalCode(terminal) {
+    const filenameElement = document.getElementById('terminal-filename');
+    const codeElement = document.getElementById('terminal-code');
+    
+    if (filenameElement && terminal.filename) {
+        filenameElement.textContent = terminal.filename;
+    }
+    
+    if (codeElement && terminal.code && Array.isArray(terminal.code)) {
+        // Clear existing content
+        codeElement.innerHTML = '';
+        
+        // Process each line of code
+        terminal.code.forEach((line, index) => {
+            const lineFragment = document.createDocumentFragment();
+            let i = 0;
+            
+            while (i < line.length) {
+                // Check for comment
+                if (line.substring(i, i + 2) === '//') {
+                    const span = document.createElement('span');
+                    span.className = 'code-comment';
+                    span.textContent = line.substring(i);
+                    lineFragment.appendChild(span);
+                    i = line.length;
+                }
+                // Check for string
+                else if (line[i] === "'") {
+                    let j = i + 1;
+                    while (j < line.length && line[j] !== "'") j++;
+                    const span = document.createElement('span');
+                    span.className = 'code-string';
+                    span.textContent = line.substring(i, j + 1);
+                    lineFragment.appendChild(span);
+                    i = j + 1;
+                }
+                // Check for keyword
+                else if (/\b(const|let|var)\b/.test(line.substring(i))) {
+                    const match = line.substring(i).match(/^(const|let|var)\b/);
+                    if (match) {
+                        const span = document.createElement('span');
+                        span.className = 'code-keyword';
+                        span.textContent = match[1];
+                        lineFragment.appendChild(span);
+                        i += match[1].length;
+                    } else {
+                        lineFragment.appendChild(document.createTextNode(line[i]));
+                        i++;
+                    }
+                }
+                // Check for property (word followed by colon)
+                else if (/^\w+\s*:/.test(line.substring(i))) {
+                    const match = line.substring(i).match(/^(\w+)(\s*):/);
+                    if (match) {
+                        const propSpan = document.createElement('span');
+                        propSpan.className = 'code-property';
+                        propSpan.textContent = match[1];
+                        lineFragment.appendChild(propSpan);
+                        if (match[2]) lineFragment.appendChild(document.createTextNode(match[2]));
+                        lineFragment.appendChild(document.createTextNode(':'));
+                        i += match[0].length;
+                    } else {
+                        lineFragment.appendChild(document.createTextNode(line[i]));
+                        i++;
+                    }
+                }
+                // Check for bracket
+                else if (/[{}\[\]()]/.test(line[i])) {
+                    const span = document.createElement('span');
+                    span.className = 'code-bracket';
+                    span.textContent = line[i];
+                    lineFragment.appendChild(span);
+                    i++;
+                }
+                // Regular character
+                else {
+                    lineFragment.appendChild(document.createTextNode(line[i]));
+                    i++;
+                }
+            }
+            
+            codeElement.appendChild(lineFragment);
+            
+            // Add line break except for last line
+            if (index < terminal.code.length - 1) {
+                codeElement.appendChild(document.createElement('br'));
+            }
+        });
+    }
 }
 
 /* ============================================
@@ -293,17 +389,22 @@ function initializeTypingEffect() {
     const typingText = document.getElementById('typing-text');
     if (!typingText) return;
     
-    const config = portfolioConfig?.personal || {};
-    const texts = [
-        config.title || 'AI Enthusiast',
-        'K8s Deployment Strategist',
-        'AI Enthusiast'
+    const config = portfolioConfig?.personal?.typingAnimation || {};
+    const texts = config.texts || [
+        portfolioConfig?.personal?.title || 'Full Stack Developer',
+        'Creative Problem Solver',
+        'Tech Enthusiast'
     ];
+    
+    const typeSpeed = config.typeSpeed || 150;
+    const deleteSpeed = config.deleteSpeed || 50;
+    const pauseAfterType = config.pauseAfterType || 2000;
+    const pauseBeforeDelete = config.pauseBeforeDelete || 500;
     
     let textIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
-    let typingSpeed = 150;
+    let currentSpeed = typeSpeed;
     
     function type() {
         const currentText = texts[textIndex];
@@ -311,23 +412,23 @@ function initializeTypingEffect() {
         if (isDeleting) {
             typingText.textContent = currentText.substring(0, charIndex - 1);
             charIndex--;
-            typingSpeed = 50;
+            currentSpeed = deleteSpeed;
         } else {
             typingText.textContent = currentText.substring(0, charIndex + 1);
             charIndex++;
-            typingSpeed = 150;
+            currentSpeed = typeSpeed;
         }
         
         if (!isDeleting && charIndex === currentText.length) {
-            typingSpeed = 2000; // Pause at end
+            currentSpeed = pauseAfterType;
             isDeleting = true;
         } else if (isDeleting && charIndex === 0) {
             isDeleting = false;
             textIndex = (textIndex + 1) % texts.length;
-            typingSpeed = 500; // Pause before next word
+            currentSpeed = pauseBeforeDelete;
         }
         
-        setTimeout(type, typingSpeed);
+        setTimeout(type, currentSpeed);
     }
     
     type();
@@ -423,10 +524,16 @@ function initializeProjects() {
 
     function buildFilters() {
         const buttons = [
-            { label: 'All Projects', value: 'all' },
-            { label: 'Featured', value: 'featured' },
-            ...categories.map(category => ({ label: category, value: category }))
+            { label: 'All Projects', value: 'all' }
         ];
+        
+        // Only add Featured filter if there are featured projects
+        if (allProjects.some(project => project.featured)) {
+            buttons.push({ label: 'Featured', value: 'featured' });
+        }
+        
+        // Add category filters
+        buttons.push(...categories.map(category => ({ label: category, value: category })));
 
         filterContainer.innerHTML = buttons.map((btn, index) => `
             <button class="filter-btn ${btn.value === 'all' ? 'active' : ''}" data-filter="${btn.value}" data-aos="fade-up" data-aos-delay="${index * 50}">
@@ -673,34 +780,36 @@ function initializeContactForm() {
     
     if (!form) return;
     
+    // Set form action from config
+    const formspreeEndpoint = portfolioConfig?.contact?.formspreeEndpoint;
+    if (formspreeEndpoint) {
+        form.action = formspreeEndpoint;
+    }
+    
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
-        
-        // Show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         submitBtn.disabled = true;
         
         try {
-            // Check if EmailJS is configured
-            if (portfolioConfig?.contact?.emailjsServiceId && typeof emailjs !== 'undefined') {
-                await emailjs.send(
-                    portfolioConfig.contact.emailjsServiceId,
-                    portfolioConfig.contact.emailjsTemplateId,
-                    data,
-                    portfolioConfig.contact.emailjsPublicKey
-                );
-                
+            // Submit form to Formspree
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
                 showFormStatus('success', 'Message sent successfully! I\'ll get back to you soon.');
                 form.reset();
             } else {
-                // Fallback - just show success message
-                showFormStatus('success', 'Thank you for your message! I\'ll get back to you soon.');
-                form.reset();
+                showFormStatus('error', 'Oops! Something went wrong. Please try again or email me directly.');
             }
         } catch (error) {
             console.error('Form submission error:', error);
@@ -817,41 +926,60 @@ function throttle(func, limit) {
    ============================================ */
 
 function initializeSkillsGrid() {
-    const container = document.getElementById('skills-radar-grid');
+    const container = document.getElementById('skills-category-grid');
     if (!container || !portfolioConfig?.skills) return;
 
     const skills = portfolioConfig.skills;
     
     skills.forEach((category, catIndex) => {
+        // Create category card
+        const categoryCard = document.createElement('div');
+        categoryCard.className = 'skill-category-card';
+        categoryCard.setAttribute('data-aos', 'fade-up');
+        categoryCard.setAttribute('data-aos-delay', catIndex * 100);
+        
         // Add category title
-        const categoryTitle = document.createElement('div');
+        const categoryTitle = document.createElement('h3');
         categoryTitle.className = 'skill-category-title';
         categoryTitle.textContent = category.category;
-        categoryTitle.setAttribute('data-aos', 'fade-up');
-        categoryTitle.setAttribute('data-aos-delay', catIndex * 100);
-        container.appendChild(categoryTitle);
-
-        // Add skill cards
+        categoryCard.appendChild(categoryTitle);
+        
+        // Create icon grid
+        const iconGrid = document.createElement('div');
+        iconGrid.className = 'skill-icon-grid';
+        
+        // Add skill icons
         category.items.forEach((skill, skillIndex) => {
-            const card = document.createElement('div');
-            card.className = 'skill-radar-card';
-            card.setAttribute('data-aos', 'zoom-in');
-            card.setAttribute('data-aos-delay', (catIndex * 100) + (skillIndex * 50));
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'skill-icon';
+            iconSpan.setAttribute('data-label', skill.displayName || skill.name);
             
-            // Set CSS variables
-            card.style.setProperty('--skill-percent', skill.level);
-            card.style.setProperty('--skill-color', category.color || '#6366f1');
+            // Use image if icon path is provided, otherwise fallback to font icon
+            if (skill.icon && (skill.icon.endsWith('.svg') || skill.icon.endsWith('.png') || skill.icon.endsWith('.jpg'))) {
+                const img = document.createElement('img');
+                img.src = skill.icon;
+                img.alt = skill.name;
+                img.className = 'skill-icon-img';
+                img.onerror = function() {
+                    // Fallback to generic icon if image fails to load
+                    this.style.display = 'none';
+                    const fallbackIcon = document.createElement('i');
+                    fallbackIcon.className = 'fas fa-code';
+                    iconSpan.appendChild(fallbackIcon);
+                };
+                iconSpan.appendChild(img);
+            } else {
+                // Use font awesome icon
+                const icon = document.createElement('i');
+                icon.className = skill.icon || 'fas fa-code';
+                iconSpan.appendChild(icon);
+            }
             
-            card.innerHTML = `
-                <div class="skill-radar-content">
-                    <i class="skill-radar-icon ${skill.icon || 'fas fa-code'}"></i>
-                    <div class="skill-radar-name">${skill.name}</div>
-                    <div class="skill-radar-percent">${skill.level}%</div>
-                </div>
-            `;
-            
-            container.appendChild(card);
+            iconGrid.appendChild(iconSpan);
         });
+        
+        categoryCard.appendChild(iconGrid);
+        container.appendChild(categoryCard);
     });
 }
 

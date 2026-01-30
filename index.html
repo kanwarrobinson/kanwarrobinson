@@ -110,17 +110,10 @@
                                 <span class="control minimize"></span>
                                 <span class="control maximize"></span>
                             </div>
-                            <div class="window-title">developer.js</div>
+                            <div class="window-title" id="terminal-filename">developer.js</div>
                         </div>
                         <div class="code-window-body">
-                            <pre class="code-content"><code><span class="code-comment">// Software Engineer</span>
-<span class="code-keyword">const</span> <span class="code-variable">developer</span> = {
-  <span class="code-property">name</span>: <span class="code-string">'Kanwar Robinson'</span>,
-  <span class="code-property">title</span>: <span class="code-string">'Software Engineer - II'</span>,
-  <span class="code-property">skills</span>: [<span class="code-string">'Python'</span>, <span class="code-string">'FastAPI'</span>, <span class="code-string">'Java'</span>],
-  <span class="code-property">focuses</span>: [<span class="code-string">'AI/LLM'</span>, <span class="code-string">'Microservices'</span>],
-  <span class="code-property">learning</span>: <span class="code-string">'Always'</span>
-};</code></pre>
+                            <pre class="code-content"><code id="terminal-code"></code></pre>
                         </div>
                     </div>
                 </div>
@@ -199,55 +192,7 @@
                 <h2 class="section-title">Skills & Expertise</h2>
                 <p class="section-subtitle">Technologies I work with</p>
             </div>
-            <div class="skills-category-grid">
-                <div class="skill-category-card">
-                    <h3 class="skill-category-title">Backend Development</h3>
-                    <div class="skill-icon-grid">
-                        <span class="skill-icon" data-label="Python"><i class="fab fa-python"></i></span>
-                        <span class="skill-icon" data-label="FastAPI"><i class="fas fa-bolt"></i></span>
-                        <span class="skill-icon" data-label="Java"><i class="fab fa-java"></i></span>
-                        <span class="skill-icon" data-label="Spring Boot"><i class="fas fa-leaf"></i></span>
-                        <span class="skill-icon" data-label="REST APIs"><i class="fas fa-network-wired"></i></span>
-                        <span class="skill-icon" data-label="Microservices"><i class="fas fa-cubes"></i></span>
-                    </div>
-                </div>
-
-                <div class="skill-category-card">
-                    <h3 class="skill-category-title">AI/ML & LLM</h3>
-                    <div class="skill-icon-grid">
-                        <span class="skill-icon" data-label="LangChain"><i class="fas fa-link"></i></span>
-                        <span class="skill-icon" data-label="LangGraph"><i class="fas fa-project-diagram"></i></span>
-                        <span class="skill-icon" data-label="RAG"><i class="fas fa-brain"></i></span>
-                        <span class="skill-icon" data-label="OpenAI APIs"><i class="fas fa-robot"></i></span>
-                        <span class="skill-icon" data-label="Vector Stores"><i class="fas fa-database"></i></span>
-                        <span class="skill-icon" data-label="Multi-Agent AI"><i class="fas fa-users-cog"></i></span>
-                    </div>
-                </div>
-
-                <div class="skill-category-card">
-                    <h3 class="skill-category-title">DevOps & Cloud</h3>
-                    <div class="skill-icon-grid">
-                        <span class="skill-icon" data-label="Kubernetes"><i class="fas fa-dharmachakra"></i></span>
-                        <span class="skill-icon" data-label="Docker"><i class="fab fa-docker"></i></span>
-                        <span class="skill-icon" data-label="Helm"><i class="fas fa-ship"></i></span>
-                        <span class="skill-icon" data-label="Jenkins"><i class="fab fa-jenkins"></i></span>
-                        <span class="skill-icon" data-label="GitHub Actions"><i class="fab fa-github"></i></span>
-                        <span class="skill-icon" data-label="GKE"><i class="fab fa-google"></i></span>
-                    </div>
-                </div>
-
-                <div class="skill-category-card">
-                    <h3 class="skill-category-title">Data & Messaging</h3>
-                    <div class="skill-icon-grid">
-                        <span class="skill-icon" data-label="MongoDB"><i class="fas fa-database"></i></span>
-                        <span class="skill-icon" data-label="Redis Stack"><i class="fas fa-server"></i></span>
-                        <span class="skill-icon" data-label="Apache Kafka"><i class="fas fa-stream"></i></span>
-                        <span class="skill-icon" data-label="Zookeeper"><i class="fas fa-sitemap"></i></span>
-                        <span class="skill-icon" data-label="OpenTelemetry"><i class="fas fa-chart-line"></i></span>
-                        <span class="skill-icon" data-label="Prometheus"><i class="fas fa-fire"></i></span>
-                    </div>
-                </div>
-            </div>
+            <div class="skills-category-grid" id="skills-category-grid"></div>
         </div>
     </section>
 
@@ -394,7 +339,7 @@
                     </div>
                 </div>
                 
-                <form class="contact-form" id="contact-form" data-aos="fade-left">
+                <form class="contact-form" id="contact-form" method="POST" data-aos="fade-left">
                     <div class="form-group">
                         <label for="name">Your Name</label>
                         <input type="text" id="name" name="name" required placeholder="John Doe">
